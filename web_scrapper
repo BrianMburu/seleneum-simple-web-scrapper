@@ -1,0 +1,46 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Mar 31 11:32:37 2021
+
+@author: brian
+"""
+
+from selenium import webdriver
+from bs4 import BeautifulSoup as bs
+import pandas as pd
+
+#setting up webdriver
+"""
+Ensure that selerium is properly installed in your system and the correct 
+path is used 
+"""
+newyork="https://www.truecar.com/used-cars-for-sale/listings/bmw/x7/location-new-york-ny/"
+alexandria="https://www.truecar.com/used-cars-for-sale/listings/bmw/location-alexandria-va/"
+
+def scrapper(url):
+    driver = webdriver.Chrome("/usr/bin/chromedriver")
+    products=[] #List to store name of the cars
+    prices=[] #List to store price of the cars
+    locations=[] #List to store location of the car
+    
+    driver.get(url)
+    content = driver.page_source
+    soup=bs(content,'html.parser')
+    for a in soup.findAll('div',attrs={'class':'_1qd1muk'}):
+        name=a.find('span',attrs={'class':'vehicle-header-make-model'})
+        price=a.find('div', attrs={'class':'heading-3'})
+        location=a.find('div', attrs={'class':'vehicle-card-location'})
+        if None in (name,price,location):
+            continue
+        products.append(name.text.strip())
+        prices.append(price.text.strip())
+        locations.append(location.text.strip())
+        
+    df = pd.DataFrame({'Product Name':products,'Price':prices,'location':locations}) 
+    print(df)
+    #df.to_csv('products.csv', index=False, encoding='utf-8') optional saving the df
+    return df
+df_ny=scrapper(newyork)
+
+ 
