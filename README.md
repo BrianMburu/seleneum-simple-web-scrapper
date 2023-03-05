@@ -4,6 +4,7 @@
 
 # To run the script or the notebook Make sure the folling are installed in your system
 * Python
+* Selenium
 * Beautiful Soup
 * Pandas
 * numpy
